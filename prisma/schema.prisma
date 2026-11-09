@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  createdAt DateTime @default(now())
+  profile Profile?
+}
+
+model Profile {
+  id String @id @default(uuid())
+  username String @unique
+  displayName String?
+  bio String?
+  settings Json @default("{}")
+  views Int @default(0)
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique
+  connections Connection[]
+}
+
+model Connection {
+  id String @id @default(uuid())
+  title String
+  url String
+  position Int
+  profile Profile @relation(fields: [profileId], references: [id])
+  profileId String
+}
